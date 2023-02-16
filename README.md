@@ -13,9 +13,9 @@
 
 <img src="https://p.sda1.dev/9/494901cebcf8fdee59d787e04812a0d5/QQ截图20230216165431.png" alt="QQ%E6%88%AA%E5%9B%BE20230216165431.png" style="zoom:50%;" />
 
-**1、**打包下载
+1、打包下载
 
-**2、**将里面的txt文件、js文件一起放在你cactbot的user目录下
+2、将里面的txt文件、js文件一起放在你cactbot的user目录下
 
 ```
 呆萌ACT\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss
@@ -23,7 +23,7 @@
 
 这是呆萌act的目录，没raidboss这个文件夹就创建一个，注意两个文件一定要放一起
 
-**3、**重启ACT或者重新加载cacbot
+3、重启ACT或者重新加载cacbot
 
 ```
 如果你要用git方便更新，在raidboss里随便创建一个子文件夹，比如叫"the_omega_protocol"，然后clone进去就行
@@ -192,7 +192,9 @@ const 索尼 = {
 
 - **HW**：先报塔颜色，然后每一轮卡着时间告诉你怎么走
 
-​		例子：（第一次拉蓝色线）![QQ%E6%88%AA%E5%9B%BE20230216181822.jpg](https://p.sda1.dev/9/925ecb3b6f65ed77f2bf704f2fb46d3f/QQ截图20230216181822.jpg)
+​		例子：（第一次拉蓝色线）
+
+<img src="https://p.sda1.dev/9/925ecb3b6f65ed77f2bf704f2fb46d3f/QQ截图20230216181822.jpg" alt="QQ%E6%88%AA%E5%9B%BE20230216181822.jpg" style="zoom:50%;" />
 
 - **电视屏幕**：
 
