@@ -23,7 +23,9 @@ const P2一运标记 = { //标记左边用攻击标记，右边锁链，从上�
 //鲶鱼精聊天框全队播报
 const P1PostNamazu = true; //P1接线踩塔是否鲶鱼精聊天框全队播报
 const P2PostNamazu = true; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
+const P3PostNamazu1 = true; //P3HW塔颜色播报
 const P3PostNamazu = true; //P3小电视站位是否鲶鱼精聊天框全队播报
+
 
    
 
@@ -807,10 +809,7 @@ Options.Triggers.push({
 				if (matches.target == data.me) {
 					data.我的次序 = data['inLine'][data.me];
 					for (let i in data['inLine']) {
-						if (
-							data['inLine'][i] == data.我的次序 &&
-							i != data.me
-						) {
+						if (data['inLine'][i] == data.我的次序 && i != data.me) {
 							data.同组职业 = nametocnjob(i, data);
 						}
 					}
@@ -846,9 +845,7 @@ Options.Triggers.push({
 			preRun: (data, matches, output) => data.塔次数++,
 			delaySeconds: 0.5,
 			alertText: (data, matches, output) => {
-				let myTime = data.towerBuff.find(
-					(i) => i.job == data.myJob
-				).time;
+				let myTime = data.towerBuff.find((i) => i.job == data.myJob).time;
 				if (data.塔次数 == 1 && myTime == 4)
 					return '接线，优先级' + data.优先级;
 				if (data.塔次数 == 2 && myTime == 1)
@@ -869,15 +866,11 @@ Options.Triggers.push({
 					let x = parseFloat(matches.x);
 					let y = parseFloat(matches.y);
 					let pos = Math.round(
-						Math.round(
-							2 - (2 * Math.atan2(x - 100, y - 100)) / Math.PI
-						) % 4
+						Math.round(2 - (2 * Math.atan2(x - 100, y - 100)) / Math.PI) % 4
 					);
 					data.tower.push(pos);
 
-					let myTime = data.towerBuff.find(
-						(i) => i.job == data.myJob
-					);
+					let myTime = data.towerBuff.find((i) => i.job == data.myJob);
 					let 同组人 = data.towerBuff.find(
 						(i) => i.time == myTime.time && i.job != data.myJob
 					);
@@ -898,12 +891,10 @@ Options.Triggers.push({
 					let 塔位置 = [];
 					let index = 分组.indexOf(data.myJob);
 					if (myTime.time == 1) {
-						if (data.tower.length >= 2)
-							塔位置 = [data.tower[0], data.tower[1]];
+						if (data.tower.length >= 2) 塔位置 = [data.tower[0], data.tower[1]];
 					}
 					if (myTime.time == 2) {
-						if (data.tower.length >= 4)
-							塔位置 = [data.tower[2], data.tower[3]];
+						if (data.tower.length >= 4) 塔位置 = [data.tower[2], data.tower[3]];
 					}
 					if (myTime.time == 3) {
 						if (data.tower.length >= 6) {
@@ -911,8 +902,7 @@ Options.Triggers.push({
 						}
 					}
 					if (myTime.time == 4) {
-						if (data.tower.length >= 8)
-							塔位置 = [data.tower[6], data.tower[7]];
+						if (data.tower.length >= 8) 塔位置 = [data.tower[6], data.tower[7]];
 					}
 					if (塔位置.length >= 1) {
 						塔位置.sort();
@@ -1106,8 +1096,7 @@ Options.Triggers.push({
 			netRegex: {
 				id: ['7E6A', '7E6B'],
 			},
-			preRun: (data, matches) =>
-				data.solarRayTargets.push(matches.target),
+			preRun: (data, matches) => data.solarRayTargets.push(matches.target),
 			response: (data, matches, output) => {
 				// cactbot-builtin-response
 				output.responseOutputStrings = {
@@ -1173,9 +1162,7 @@ Options.Triggers.push({
 					//如果出现问题，至少在这里返回一些东西。
 					if (myMarker === undefined) return glitch;
 					let partner = 'unknown';
-					for (const [_name, _marker] of Object.entries(
-						data.synergyMarker
-					)) {
+					for (const [_name, _marker] of Object.entries(data.synergyMarker)) {
 						if (_marker === myMarker && _name !== name) {
 							partner = _name;
 							break;
@@ -1208,10 +1195,7 @@ Options.Triggers.push({
 				}
 
 				for (let i in data.synergyMarker) {
-					data.P2一运名字[i] = [
-						data.synergyMarker[i],
-						leftOrRight(i),
-					];
+					data.P2一运名字[i] = [data.synergyMarker[i], leftOrRight(i)];
 				}
 
 				return data.myMarker + ',去' + data.P2一运名字[data.me][1];
@@ -1266,22 +1250,14 @@ Options.Triggers.push({
 						let _标记;
 						let _左右 = data.P2一运名字[name][1];
 						let _排数 = data.P2一运名字[name][2];
-						if (_左右 == '左' && _排数 == '第一排')
-							_标记 = P2一运标记.左1;
-						if (_左右 == '左' && _排数 == '第二排')
-							_标记 = P2一运标记.左2;
-						if (_左右 == '左' && _排数 == '第三排')
-							_标记 = P2一运标记.左3;
-						if (_左右 == '左' && _排数 == '第四排')
-							_标记 = P2一运标记.左4;
-						if (_左右 == '右' && _排数 == '第一排')
-							_标记 = P2一运标记.右1;
-						if (_左右 == '右' && _排数 == '第二排')
-							_标记 = P2一运标记.右2;
-						if (_左右 == '右' && _排数 == '第三排')
-							_标记 = P2一运标记.右3;
-						if (_左右 == '右' && _排数 == '第四排')
-							_标记 = P2一运标记.右4;
+						if (_左右 == '左' && _排数 == '第一排') _标记 = P2一运标记.左1;
+						if (_左右 == '左' && _排数 == '第二排') _标记 = P2一运标记.左2;
+						if (_左右 == '左' && _排数 == '第三排') _标记 = P2一运标记.左3;
+						if (_左右 == '左' && _排数 == '第四排') _标记 = P2一运标记.左4;
+						if (_左右 == '右' && _排数 == '第一排') _标记 = P2一运标记.右1;
+						if (_左右 == '右' && _排数 == '第二排') _标记 = P2一运标记.右2;
+						if (_左右 == '右' && _排数 == '第三排') _标记 = P2一运标记.右3;
+						if (_左右 == '右' && _排数 == '第四排') _标记 = P2一运标记.右4;
 						return _标记;
 					}
 
@@ -1396,14 +1372,7 @@ Options.Triggers.push({
 
 				FFD.Send(json[skills[1]]);
 				if (skills[0] == '辣翅') {
-					FFD.send_feetfighter(
-						data.P2男女组合技FFD[1],
-						50,
-						8,
-						40,
-						20,
-						5
-					);
+					FFD.send_feetfighter(data.P2男女组合技FFD[1], 50, 8, 40, 20, 5);
 				} else {
 					FFD.Send(json[skills[0]]);
 				}
@@ -1559,9 +1528,7 @@ Options.Triggers.push({
 					//如果同边
 					let name1 = data.一运击退换组[0];
 					let name2 = data.一运击退换组[1];
-					if (
-						data.P2一运名字[name1][1] == data.P2一运名字[name2][1]
-					) {
+					if (data.P2一运名字[name1][1] == data.P2一运名字[name2][1]) {
 						let a1 = 0;
 						let a2 = 0;
 						if (data.P2一运名字[name1][2] == '第一排') a1 = 1;
@@ -1691,11 +1658,7 @@ Options.Triggers.push({
 				let pos = Math.round(
 					Math.round(
 						4 -
-							(4 *
-								Math.atan2(
-									二运boss.PosX - 100,
-									二运boss.PosY - 100
-								)) /
+							(4 * Math.atan2(二运boss.PosX - 100, 二运boss.PosY - 100)) /
 								Math.PI
 					) % 8
 				);
@@ -1704,25 +1667,14 @@ Options.Triggers.push({
 			alertText: (data, matches) => {
 				if (data.linePos.length == 2) {
 					data.linePos.sort();
-					let bobao = [
-						'上',
-						'右上',
-						'右',
-						'右下',
-						'下',
-						'左下',
-						'左',
-						'左上',
-					];
+					let bobao = ['上', '右上', '右', '右下', '下', '左下', '左', '左上'];
 					let myRoleInparty = data.全能之主优先级.findIndex(
 						(i) => i.job == data.myJob
 					);
 					//是mt
-					if (myRoleInparty == 1)
-						return `去${bobao[data.linePos[0]]}接线`;
+					if (myRoleInparty == 1) return `去${bobao[data.linePos[0]]}接线`;
 					//是st
-					if (myRoleInparty == 2)
-						return `去${bobao[data.linePos[1]]}接线`;
+					if (myRoleInparty == 2) return `去${bobao[data.linePos[1]]}接线`;
 				}
 			},
 		},
@@ -1816,10 +1768,7 @@ Options.Triggers.push({
 					if (data.P2_5分摊人 === undefined) data.P2_5分摊人 = [];
 					data.P2_5分摊人.push(name);
 				}
-				if (
-					data.P2_5分散人.length == 4 &&
-					data.P2_5分摊人.length == 2
-				) {
+				if (data.P2_5分散人.length == 4 && data.P2_5分摊人.length == 2) {
 					function 职业优先级排序(a, b) {
 						let jobA = nametocnjob(a, data);
 						let jobB = nametocnjob(b, data);
@@ -1845,24 +1794,15 @@ Options.Triggers.push({
 					if (data.me == data.P2_5分散人[1]) return '左下分散';
 					if (data.me == data.P2_5分散人[2]) return '右下分散';
 					if (data.me == data.P2_5分散人[3]) return '右边分散';
-					if (
-						data.me == data.P2_5分摊人[0] ||
-						data.me == data.P2_5无点名[0]
-					)
+					if (data.me == data.P2_5分摊人[0] || data.me == data.P2_5无点名[0])
 						return '左上分摊';
-					if (
-						data.me == data.P2_5分摊人[1] ||
-						data.me == data.P2_5无点名[1]
-					)
+					if (data.me == data.P2_5分摊人[1] || data.me == data.P2_5无点名[1])
 						return '右上分摊';
 				}
 			},
 			//标记
 			run: (data, matches) => {
-				if (
-					data.P2_5分散人.length == 4 &&
-					data.P2_5分摊人.length == 2
-				) {
+				if (data.P2_5分散人.length == 4 && data.P2_5分摊人.length == 2) {
 					PostNamazu('mark', {
 						Name: data.P2_5分散人[0],
 						MarkType: `attack1`,
@@ -2055,6 +1995,17 @@ Options.Triggers.push({
 			disabled: true,
 		},
 		{
+      id: 'TOP Rot Spread',
+      type: 'GainsEffect',
+      // D65 Critical Performance Bug (blue)
+      // DC6 Critical Underflow Bug (red)
+      // Debuffs last 27s
+      netRegex: { effectId: ['D65', 'DC6'] },
+      // TODO: should we have a "Watch Rot" call if you don't get it?
+      // (with some suppression due to inconsistent rot pickup timings etc)
+			disabled: true,
+    },
+		{
 			id: 'TOP Code Smell Defamation Color',
 			type: 'GainsEffect',
 			netRegex: {
@@ -2101,12 +2052,12 @@ Options.Triggers.push({
 				if (rotColor === 'red') {
 					data.P3HW大圈塔 = '红';
 					data.P3HW分摊塔 = '蓝';
-					PostNamazu('command', '大圈红色red，分摊蓝色blue');
+					if (P3PostNamazu1) PostNamazu('command', '大圈红色red，分摊蓝色blue');
 					return output.red();
 				} else if (rotColor === 'blue') {
 					data.P3HW大圈塔 = '蓝';
 					data.P3HW分摊塔 = '红';
-					PostNamazu('command', '大圈蓝色blue，分摊红色red');
+					if (P3PostNamazu1) PostNamazu('command', '大圈蓝色blue，分摊红色red');
 					return output.blue();
 				}
 				return output.unknown();
@@ -2143,8 +2094,7 @@ Options.Triggers.push({
 				let 我的点名 = data.smellRot[data.me];
 				let 同组人;
 				for (let i in data.smellRot) {
-					if (i != data.me && data.smellRot[i] == 我的点名)
-						同组人 = i;
+					if (i != data.me && data.smellRot[i] == 我的点名) 同组人 = i;
 				}
 				同组人 = nametocnjob(同组人, data);
 				if (data.职业优先级[同组人] < data.职业优先级[data.myJob]) {
@@ -2253,7 +2203,7 @@ Options.Triggers.push({
 				effectId: ['D7D', 'D7C'],
 				capture: true,
 			}),
-      durationSeconds:5,
+			durationSeconds: 5,
 			preRun: (data, matches) => {
 				data.P3小电视点名.push(matches.target);
 			},
@@ -2289,27 +2239,13 @@ Options.Triggers.push({
 						nametocnjob(data.P3小电视点名[1], data),
 						nametocnjob(data.P3小电视点名[2], data),
 					];
-					let temp2 = [
-						temp[0][1],
-						temp[1][1],
-						temp[2][1],
-						temp[3][1],
-					]; //下面组
-					let 交集 = temp2.filter((value) =>
-						点名3人组.includes(value)
-					); //下面组有几个点名
+					let temp2 = [temp[0][1], temp[1][1], temp[2][1], temp[3][1]]; //下面组
+					let 交集 = temp2.filter((value) => 点名3人组.includes(value)); //下面组有几个点名
 					if (交集.length > 1) {
 						//如果下面组人数>1
 						for (let i = 0; i < 4; i++) {
-							let _temp2 = [
-								temp[0][1],
-								temp[1][1],
-								temp[2][1],
-								temp[3][1],
-							]; //下面组
-							let _交集 = _temp2.filter((value) =>
-								点名3人组.includes(value)
-							); //下面组有几个点名
+							let _temp2 = [temp[0][1], temp[1][1], temp[2][1], temp[3][1]]; //下面组
+							let _交集 = _temp2.filter((value) => 点名3人组.includes(value)); //下面组有几个点名
 							if (_交集.length > 1) {
 								//如果下面组人数>1
 								if (
@@ -2365,22 +2301,14 @@ Options.Triggers.push({
 					data.P3小电视站位.下2 = temp[3][1];
 					for (let i in data.P3小电视站位) {
 						if (data.P3小电视站位[i] == data.myJob) {
-							if (i == '左2')
-								return `横排第1`;
-							if (i == '左1')
-								return `横排第2`;
-							if (i == '右1')
-								return `横排第3`;
-							if (i == '右2')
-								return `横排第4`;
-							if (i == '上2')
-								return `竖排第1`;
-							if (i == '上1')
-								return `竖排第2`;
-							if (i == '下1')
-								return `竖排第3`;
-							if (i == '下2')
-								return `竖排第4`;
+							if (i == '左2') return `横排第1`;
+							if (i == '左1') return `横排第2`;
+							if (i == '右1') return `横排第3`;
+							if (i == '右2') return `横排第4`;
+							if (i == '上2') return `竖排第1`;
+							if (i == '上1') return `竖排第2`;
+							if (i == '下1') return `竖排第3`;
+							if (i == '下2') return `竖排第4`;
 						}
 					}
 				}
@@ -2454,73 +2382,83 @@ Options.Triggers.push({
 			netRegex: { effectId: ['D7C', 'D7D'], capture: true },
 			condition: Conditions.targetIsYou(),
 			delaySeconds: 2,
-      durationSeconds:5,
+			durationSeconds: 5,
 			infoText: (data, matches) => {
-          let boss = data.P3BOSS电视; // '右' || '左'
-          let 结果 = data.P3小电视补充; // '往上放' || '往下放'
-          let 自己 = matches.effectId == 'D7C' ? '右' : '左';
-          let re = '';
-          //横排左
-          if ([
-            data.P3小电视站位.左2,
-            data.P3小电视站位.左1,
-          ].includes(data.myJob)) {
-            if ((结果 == '往上放' && 自己 == '右')||(结果 == '往下放' && 自己 == '左')) {
-              re = `背对BOSS，然后向${自己}走一步`
-            }else re = `面朝BOSS，然后向${自己}走一步`
-          }
-          //横排右
-          if ([
-            data.P3小电视站位.右2,
-            data.P3小电视站位.右1,
-          ].includes(data.myJob)) {
-            if ((结果 == '往上放' && 自己 == '右')||(结果 == '往下放' && 自己 == '左')) {
-              re = `面朝BOSS，然后向${自己}走一步`
-            }else re = `背对BOSS，然后向${自己}走一步`
-          }
-          //竖排上
-          if ([
-            data.P3小电视站位.上2,
-            data.P3小电视站位.上1,
-          ].includes(data.myJob)) {
-            if ((boss == '右' && 自己 == '右')||(结果 == '左' && 自己 == '左')) {
-              re = `面朝BOSS，然后向${自己}走一步`
-            }else re = `背对BOSS，然后向${自己}走一步`
-          }
-          //竖排下
-          if ([
-            data.P3小电视站位.下2,
-            data.P3小电视站位.下1,
-          ].includes(data.myJob)) {
-            if ((boss == '右' && 自己 == '右')||(结果 == '左' && 自己 == '左')) {
-              re = `背对BOSS，然后向${自己}走一步`
-            }else re = `面朝BOSS，然后向${自己}走一步`
-          }
-          return re
+				let boss = data.P3BOSS电视; // '右' || '左'
+				let 结果 = data.P3小电视补充; // '往上放' || '往下放'
+				let 自己 = matches.effectId == 'D7C' ? '右' : '左';
+				let re = '';
+				//横排左
+				if (
+					[data.P3小电视站位.左2, data.P3小电视站位.左1].includes(data.myJob)
+				) {
+					if (
+						(结果 == '往上放' && 自己 == '右') ||
+						(结果 == '往下放' && 自己 == '左')
+					) {
+						re = `背对BOSS，然后向${自己}走一步`;
+					} else re = `面朝BOSS，然后向${自己}走一步`;
+				}
+				//横排右
+				if (
+					[data.P3小电视站位.右2, data.P3小电视站位.右1].includes(data.myJob)
+				) {
+					if (
+						(结果 == '往上放' && 自己 == '右') ||
+						(结果 == '往下放' && 自己 == '左')
+					) {
+						re = `面朝BOSS，然后向${自己}走一步`;
+					} else re = `背对BOSS，然后向${自己}走一步`;
+				}
+				//竖排上
+				if (
+					[data.P3小电视站位.上2, data.P3小电视站位.上1].includes(data.myJob)
+				) {
+					if (
+						(boss == '右' && 自己 == '右') ||
+						(结果 == '左' && 自己 == '左')
+					) {
+						re = `面朝BOSS，然后向${自己}走一步`;
+					} else re = `背对BOSS，然后向${自己}走一步`;
+				}
+				//竖排下
+				if (
+					[data.P3小电视站位.下2, data.P3小电视站位.下1].includes(data.myJob)
+				) {
+					if (
+						(boss == '右' && 自己 == '右') ||
+						(结果 == '左' && 自己 == '左')
+					) {
+						re = `背对BOSS，然后向${自己}走一步`;
+					} else re = `面朝BOSS，然后向${自己}走一步`;
+				}
+				return re;
 			},
 		},
-    {
+		{
 			id: 'P3 小电视没点名的人的半场',
 			type: 'GainsEffect',
 			netRegex: { effectId: ['D7C', 'D7D'], capture: false },
-      suppressSeconds:3,
+			suppressSeconds: 3,
 			delaySeconds: 2,
-      durationSeconds:5,
-      infoText: (data, matches) => {
-        if ([
-          data.P3小电视站位.上2,
-          data.P3小电视站位.上1,
-          data.P3小电视站位.下2,
-          data.P3小电视站位.下1,
-        ].includes(data.myJob)) {
-          if (data.P3BOSS电视 == '左') {
-            return '站右半场'
-          } else {
-            return '站左半场'
-          }
-        }
-      },
-    },
+			durationSeconds: 5,
+			infoText: (data, matches) => {
+				if (
+					[
+						data.P3小电视站位.上2,
+						data.P3小电视站位.上1,
+						data.P3小电视站位.下2,
+						data.P3小电视站位.下1,
+					].includes(data.myJob)
+				) {
+					if (data.P3BOSS电视 == '左') {
+						return '站右半场';
+					} else {
+						return '站左半场';
+					}
+				}
+			},
+		},
 		{
 			id: 'TOP Oversampled Wave Cannon Loading',
 			type: 'GainsEffect',
