@@ -456,6 +456,8 @@ Options.Triggers.push({
 			P3手臂次数: 0,
 			P3HW轮次: 1,
 			P3小电视点名: [],
+			P4点名:[],
+			P4波动炮:1,
 		};
 	},
 	timelineTriggers: [
@@ -1320,8 +1322,6 @@ Options.Triggers.push({
 				let skills = data.P2男女组合技FFD[0];
 				const 男人 = data.P2男女组合技FFD[2].ID;
 				const 女人 = data.P2男女组合技FFD[1].ID;
-				console.log('女人', 女人, skills[0]);
-				console.log('男人', 男人, skills[1]);
 				let json = {
 					钢铁: {
 						cmd: 'add_omen',
@@ -2248,10 +2248,10 @@ Options.Triggers.push({
 							let _交集 = _temp2.filter((value) => 点名3人组.includes(value)); //下面组有几个点名
 							if (_交集.length > 1) {
 								//如果下面组人数>1
-								if (
+								if (	//当前组里上下点名数量
 									(temp[i].filter((value) =>
 										点名3人组.includes(value)
-									).length = 1)
+									).length == 1)
 								) {
 									//如果当前上下组里有一个点名
 									if (!点名3人组.includes(temp[i][0])) {
@@ -2475,6 +2475,12 @@ Options.Triggers.push({
 				(data.P3BOSS电视 = matches.id == '7B6B' ? '右' : '左'),
 		},
 		{
+      id: 'TOP Oversampled Wave Cannon West',
+      type: 'StartsUsing',
+      netRegex: { id: '7B6C', source: 'Omega', capture: false },
+      disabled: true,
+    },
+		{
 			id: 'P3 狂暴',
 			type: 'StartsUsing',
 			netRegex: { id: '7B48', capture: false },
@@ -2482,5 +2488,80 @@ Options.Triggers.push({
 		},
 
 		//P4
+
+		{
+      id: 'TOP Wave Cannon Stack Collector',
+      type: 'Ability',
+      netRegex: { id: '5779'},
+			delaySeconds:5,
+			suppressSeconds:1,
+			infoText:(data)=>{
+				data.P4波动炮++;
+				if (data.P4波动炮 == 2||data.P4波动炮 == 3) {
+					if (data.P4波动炮 == 2) {
+						return '第2轮八方，目标圈外穿地火'
+					} else {
+						return '第3轮八方'
+					}
+				}
+			}
+		},
+    {
+      id: 'TOP Wave Cannon Stack',
+      type: 'Ability',
+      netRegex: { id: '5779'},
+			preRun:(data, matches) => {
+				data.P4点名.push(matches.target)
+			},
+      alertText: (data) => {
+				if (data.P4点名.length !== 2)
+          return;
+				let left = [data.职业位置.MT,data.职业位置.D3,data.职业位置.H1,data.职业位置.D1];
+				let right = [data.职业位置.ST,data.职业位置.D4,data.职业位置.H2,data.职业位置.D2];
+				let p1 = data.P4点名[0];
+				let p2 = data.P4点名[1];
+				p1 = nametocnjob(p1,data);
+				p2 = nametocnjob(p2,data);
+				let job = nametocnjob(data.me,data);
+				data.P4点名=[];
+				let 补充=data.P4波动炮==3?'，目标圈外穿地火':'';
+				
+				if (!(left.includes(p1) && right.includes(p2))) { //点名在同一边
+					//P1 P2排序
+					if (left.includes(p1)) { //全在左边
+						if (left.indexOf(p1)>left.indexOf(p2)) {
+							let temp = p1;
+							p2 = p1;
+							p1 = temp;
+						}
+					}else{	//全在右边
+						if (right.indexOf(p1)>right.indexOf(p2)) {
+							let temp = p1;
+							p2 = p1;
+							p1 = temp;
+						}
+					}
+
+					if (p2 == job) { //自己是否是下面那个点名
+						return `去对面组分摊${补充}`;
+					}
+					
+					if (job == data.职业位置.D1 || job == data.职业位置.D2) { //自己是D1或D2
+						let p = left.includes(job)?left:right; //	自己所在的组
+						if (!p.includes(p1)) { //自己组是否无点名
+							return `去对面组分摊${补充}`;
+						}
+					}
+					return `八方后分摊${补充}`;
+				}
+      }
+    },
+		{
+			id: 'P4 狂暴',
+			type: 'StartsUsing',
+			netRegex: { id: '7B7B', capture: false },
+			alertText: 'P4狂暴',
+		},
+		
 	],
 });
