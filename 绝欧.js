@@ -456,8 +456,8 @@ Options.Triggers.push({
 			P3手臂次数: 0,
 			P3HW轮次: 1,
 			P3小电视点名: [],
-			P4点名:[],
-			P4波动炮:1,
+			P4点名: [],
+			P4波动炮: 1,
 		};
 	},
 	timelineTriggers: [
@@ -1750,6 +1750,19 @@ Options.Triggers.push({
 
 		//p3
 		{
+			id: '欧密茄p2.5bu标记清除',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D61', 'D62'],
+				capture: true,
+			}),
+			suppressSeconds: 26,
+			delaySeconds: 26,
+			run: () => {
+				PostNamazuMarkClear();
+			},
+		},
+		{
 			id: '欧密茄p2.5buff',
 			type: 'GainsEffect',
 			netRegex: NetRegexes.gainsEffect({
@@ -1995,16 +2008,16 @@ Options.Triggers.push({
 			disabled: true,
 		},
 		{
-      id: 'TOP Rot Spread',
-      type: 'GainsEffect',
-      // D65 Critical Performance Bug (blue)
-      // DC6 Critical Underflow Bug (red)
-      // Debuffs last 27s
-      netRegex: { effectId: ['D65', 'DC6'] },
-      // TODO: should we have a "Watch Rot" call if you don't get it?
-      // (with some suppression due to inconsistent rot pickup timings etc)
+			id: 'TOP Rot Spread',
+			type: 'GainsEffect',
+			// D65 Critical Performance Bug (blue)
+			// DC6 Critical Underflow Bug (red)
+			// Debuffs last 27s
+			netRegex: { effectId: ['D65', 'DC6'] },
+			// TODO: should we have a "Watch Rot" call if you don't get it?
+			// (with some suppression due to inconsistent rot pickup timings etc)
 			disabled: true,
-    },
+		},
 		{
 			id: 'TOP Code Smell Defamation Color',
 			type: 'GainsEffect',
@@ -2248,10 +2261,10 @@ Options.Triggers.push({
 							let _交集 = _temp2.filter((value) => 点名3人组.includes(value)); //下面组有几个点名
 							if (_交集.length > 1) {
 								//如果下面组人数>1
-								if (	//当前组里上下点名数量
-									(temp[i].filter((value) =>
-										点名3人组.includes(value)
-									).length == 1)
+								if (
+									//当前组里上下点名数量
+									temp[i].filter((value) => 点名3人组.includes(value)).length ==
+									1
 								) {
 									//如果当前上下组里有一个点名
 									if (!点名3人组.includes(temp[i][0])) {
@@ -2266,9 +2279,8 @@ Options.Triggers.push({
 							//如果下面组人数为0
 							for (let i = 3; i >= 0; i--) {
 								if (
-									(temp[i].filter((value) =>
-										点名3人组.includes(value)
-									).length = 1)
+									temp[i].filter((value) => 点名3人组.includes(value)).length ==
+									1
 								) {
 									//如果当前上下组里有一个点名
 									temp[i].reverse();
@@ -2475,11 +2487,11 @@ Options.Triggers.push({
 				(data.P3BOSS电视 = matches.id == '7B6B' ? '右' : '左'),
 		},
 		{
-      id: 'TOP Oversampled Wave Cannon West',
-      type: 'StartsUsing',
-      netRegex: { id: '7B6C', source: 'Omega', capture: false },
-      disabled: true,
-    },
+			id: 'TOP Oversampled Wave Cannon West',
+			type: 'StartsUsing',
+			netRegex: { id: '7B6C', source: 'Omega', capture: false },
+			disabled: true,
+		},
 		{
 			id: 'P3 狂暴',
 			type: 'StartsUsing',
@@ -2490,78 +2502,92 @@ Options.Triggers.push({
 		//P4
 
 		{
-      id: 'TOP Wave Cannon Stack Collector',
-      type: 'Ability',
-      netRegex: { id: '5779'},
-			delaySeconds:5,
-			suppressSeconds:1,
-			infoText:(data)=>{
+			id: 'TOP Wave Cannon Stack Collector',
+			type: 'Ability',
+			netRegex: { id: '5779' },
+			delaySeconds: 5,
+			suppressSeconds: 1,
+			infoText: (data) => {
 				data.P4波动炮++;
-				if (data.P4波动炮 == 2||data.P4波动炮 == 3) {
+				if (data.P4波动炮 == 2 || data.P4波动炮 == 3) {
 					if (data.P4波动炮 == 2) {
-						return '第2轮八方，目标圈外穿地火'
+						return '第2轮八方，目标圈外穿地火';
 					} else {
-						return '第3轮八方'
+						return '第3轮八方';
 					}
 				}
-			}
-		},
-    {
-      id: 'TOP Wave Cannon Stack',
-      type: 'Ability',
-      netRegex: { id: '5779'},
-			preRun:(data, matches) => {
-				data.P4点名.push(matches.target)
 			},
-      alertText: (data) => {
-				if (data.P4点名.length !== 2)
-          return;
-				let left = [data.职业位置.MT,data.职业位置.D3,data.职业位置.H1,data.职业位置.D1];
-				let right = [data.职业位置.ST,data.职业位置.D4,data.职业位置.H2,data.职业位置.D2];
+		},
+		{
+			id: 'TOP Wave Cannon Stack',
+			type: 'Ability',
+			netRegex: { id: '5779' },
+			preRun: (data, matches) => {
+				data.P4点名.push(matches.target);
+			},
+			alertText: (data) => {
+				if (data.P4点名.length !== 2) return;
+				let left = [
+					data.职业位置.MT,
+					data.职业位置.D3,
+					data.职业位置.H1,
+					data.职业位置.D1,
+				];
+				let right = [
+					data.职业位置.ST,
+					data.职业位置.D4,
+					data.职业位置.H2,
+					data.职业位置.D2,
+				];
 				let p1 = data.P4点名[0];
 				let p2 = data.P4点名[1];
-				p1 = nametocnjob(p1,data);
-				p2 = nametocnjob(p2,data);
-				let job = nametocnjob(data.me,data);
-				data.P4点名=[];
-				let 补充=data.P4波动炮==3?'，目标圈外穿地火':'';
-				
-				if (!(left.includes(p1) && right.includes(p2))) { //点名在同一边
+				p1 = nametocnjob(p1, data);
+				p2 = nametocnjob(p2, data);
+				let job = nametocnjob(data.me, data);
+				data.P4点名 = [];
+				let 补充 = data.P4波动炮 == 3 ? '，目标圈外穿地火' : '';
+
+				if (!(left.includes(p1) && right.includes(p2))) {
+					//点名在同一边
 					//P1 P2排序
-					if (left.includes(p1)) { //全在左边
-						if (left.indexOf(p1)>left.indexOf(p2)) {
+					if (left.includes(p1)) {
+						//全在左边
+						if (left.indexOf(p1) > left.indexOf(p2)) {
 							let temp = p1;
 							p2 = p1;
 							p1 = temp;
 						}
-					}else{	//全在右边
-						if (right.indexOf(p1)>right.indexOf(p2)) {
+					} else {
+						//全在右边
+						if (right.indexOf(p1) > right.indexOf(p2)) {
 							let temp = p1;
 							p2 = p1;
 							p1 = temp;
 						}
 					}
 
-					if (p2 == job) { //自己是否是下面那个点名
+					if (p2 == job) {
+						//自己是否是下面那个点名
 						return `去对面组分摊${补充}`;
 					}
-					
-					if (job == data.职业位置.D1 || job == data.职业位置.D2) { //自己是D1或D2
-						let p = left.includes(job)?left:right; //	自己所在的组
-						if (!p.includes(p1)) { //自己组是否无点名
+
+					if (job == data.职业位置.D1 || job == data.职业位置.D2) {
+						//自己是D1或D2
+						let p = left.includes(job) ? left : right; //	自己所在的组
+						if (!p.includes(p1)) {
+							//自己组是否无点名
 							return `去对面组分摊${补充}`;
 						}
 					}
 					return `八方后分摊${补充}`;
 				}
-      }
-    },
+			},
+		},
 		{
 			id: 'P4 狂暴',
 			type: 'StartsUsing',
 			netRegex: { id: '7B7B', capture: false },
 			alertText: 'P4狂暴',
 		},
-		
 	],
 });
