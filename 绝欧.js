@@ -690,39 +690,6 @@ Options.Triggers.push({
 				PostNamazuMarkClear();
 			},
 		},
-		{
-			id: 'P2.5穿',
-			regex: /巨能爆散 1/,
-			beforeSeconds: 0,
-			alertText: '穿穿穿',
-		},
-		{
-			id: '删除前2P的变量',
-			regex: /速射式波动炮 1/,
-			beforeSeconds: 1,
-			run: (data) => {
-				//删除前2P的变量
-				data.全能之主优先级 = undefined;
-				data.solarRayTargets = undefined;
-				data.inLine = undefined;
-				data.synergyMarker = undefined;
-				data.spotlightStacks = undefined;
-				data.cannonFodder = undefined;
-				data.塔次数 = undefined;
-				data.一运击退换组 = undefined;
-				data.P2一运分摊点名检测 = undefined;
-				data.我的次序 = undefined;
-				data.同组职业 = undefined;
-				data.优先级 = undefined;
-				data.P1分组 = undefined;
-				data.tower = undefined;
-				data.变身Boss = undefined;
-				data.decOffset = undefined;
-				data.glitch = undefined;
-				data.P2一运名字 = undefined;
-				data.索尼同组人 = undefined;
-			},
-		},
 	],
 	triggers: [
 		//P1
@@ -1758,8 +1725,28 @@ Options.Triggers.push({
 			}),
 			suppressSeconds: 26,
 			delaySeconds: 26,
-			run: () => {
+			run: (data) => {
 				PostNamazuMarkClear();
+				//删除前2P的变量
+				data.全能之主优先级 = undefined;
+				data.solarRayTargets = undefined;
+				data.inLine = undefined;
+				data.synergyMarker = undefined;
+				data.spotlightStacks = undefined;
+				data.cannonFodder = undefined;
+				data.塔次数 = undefined;
+				data.一运击退换组 = undefined;
+				data.P2一运分摊点名检测 = undefined;
+				data.我的次序 = undefined;
+				data.同组职业 = undefined;
+				data.优先级 = undefined;
+				data.P1分组 = undefined;
+				data.tower = undefined;
+				data.变身Boss = undefined;
+				data.decOffset = undefined;
+				data.glitch = undefined;
+				data.P2一运名字 = undefined;
+				data.索尼同组人 = undefined;
 			},
 		},
 		{
@@ -2588,6 +2575,47 @@ Options.Triggers.push({
 			type: 'StartsUsing',
 			netRegex: { id: '7B7B', capture: false },
 			alertText: 'P4狂暴',
+			run :(data)=>{
+				//删除前4P变量
+				data.smellDefamation = undefined;
+				data.smellRot = undefined;
+				data.regression = undefined;
+				data.bugRot = undefined;
+				data.P3手臂次数 = undefined;
+				data.P3HW轮次 = undefined;
+				data.P3小电视点名 = undefined;
+				data.P4点名 = undefined;
+				data.P4波动炮 = undefined;
+				data.bobaoIndex = undefined;
+				data.bobao = undefined;
+				data.myMarker = undefined;
+				data.P2男女组合技FFD = undefined;
+				data.linePos = undefined;
+				data.P2_5分散人 = undefined;
+				data.P2_5分摊人 = undefined;
+				data.P2_5无点名 = undefined;
+				data.defamationColor = undefined;
+				data.P3HW大圈塔 = undefined;
+				data.P3HW分摊塔 = undefined;
+				data.HW1 = undefined;
+				data.HW2 = undefined;
+				data.P3HWtts = undefined;
+				data.P3小电视站位 = undefined;
+				data.P3小电视补充 = undefined;
+				data.P3点名3人组 = undefined;
+				data.P3BOSS电视 = undefined;
+				data.pantoMissileCount = undefined;
+				data.loopBlasterCount = undefined;
+				data.meteorTargets = undefined;
+				data.latentDefectCount = undefined;
+				data.patchVulnCount = undefined;
+				data.waveCannonStacks = undefined;
+				data.monitorPlayers = undefined;
+			}
 		},
+		
+		//P5
+
+		
 	],
 });
