@@ -8,6 +8,7 @@ const onlyMeMark = true; //P1接线标记是否仅自己可见？
 const onlyMeMarkP2 = true; //P2一运标记是否仅自己可见？
 const onlyMeMarkP2_5 = false; //P2.5标记是否仅自己可见？
 const onlyMeMarkP3 = false; //P3小电视点名标记是否仅自己可见？
+const onlyMeMarkP5 = false; //P5点名标记是否仅自己可见？
 
 const P2一运标记 = { //标记左边用攻击标记，右边锁链，从上到下1234 (因为没有锁链4，所以右4用方块代替)
   左1: 'attack1',
@@ -19,8 +20,15 @@ const P2一运标记 = { //标记左边用攻击标记，右边锁链，从上�
   右3: 'bind3',
   右4: 'square',
 }
+const P5一运标记={
+	外侧1:'attack1',
+	外侧2:'attack2',
+	内侧1:'stop1',
+	内侧2:'stop2',
+}
 
 //鲶鱼精聊天框全队播报
+const PartyPostNamazu = true; //鲶鱼精聊天框全队播报总开关
 const P1PostNamazu = true; //P1接线踩塔是否鲶鱼精聊天框全队播报
 const P2PostNamazu = true; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
 const P3PostNamazu1 = true; //P3HW塔颜色播报
@@ -112,11 +120,13 @@ function PostNamazu(type, text) {
       }
       return
     };
-    callOverlayHandler({
-      call: "PostNamazu",
-      c: type,
-      p: text
-    });
+		if (PartyPostNamazu) {
+			callOverlayHandler({
+				call: "PostNamazu",
+				c: type,
+				p: text
+			});
+		}
   }
 };
 
@@ -2530,11 +2540,13 @@ Options.Triggers.push({
 				let p2 = data.P4点名[1];
 				p1 = nametocnjob(p1, data);
 				p2 = nametocnjob(p2, data);
+				console.log(p1,p2);
 				let job = nametocnjob(data.me, data);
 				data.P4点名 = [];
 				let 补充 = data.P4波动炮 == 3 ? '，目标圈外穿地火' : '';
 
-				if (!(left.includes(p1) && right.includes(p2))) {
+				if ((left.includes(p1) && left.includes(p2))||(right.includes(p1) && right.includes(p2))) {
+					console.log('1');
 					//点名在同一边
 					//P1 P2排序
 					if (left.includes(p1)) {
@@ -2568,6 +2580,7 @@ Options.Triggers.push({
 					}
 					return `八方后分摊${补充}`;
 				}
+				return `八方后分摊${补充}`;
 			},
 		},
 		{
@@ -2616,6 +2629,97 @@ Options.Triggers.push({
 		
 		//P5
 
-		
+		{
+      id: 'P5开始',
+      type: 'StartsUsing',
+      netRegex: NetRegexes.startsUsing({ id: '7B88', capture: false }),
+      run: (data) => {
+        data.P5 = true;
+				data.P5一运线 = {
+					蓝线:[],
+					绿线:[]
+				};
+      },
+			alarmText:'超大AOE'
+    },
+		{
+      id: '欧密茄大拳拳换位判断',
+      type: 'AddedCombatant',
+      netRegex: NetRegexes.addedCombatantFull({ npcBaseId: ['15709', '15710'] }),
+			condition: (data)=>data.P5,
+			infoText:'小拳拳'
+		},
+		//00C9蓝线
+		//00C8绿线
+
+		// "P5一运线": {
+		// 	"蓝线": [  						data.P5一运线.蓝线[0]为场外组，标记攻击12				
+		// 		[
+		// 			"xx",		攻击1
+		// 			"xx",		攻击2
+		// 		],
+		// 		[										data.P5一运线.蓝线[1]为场内组，标记禁止12		
+		// 			"xx",		禁止1
+		// 			"xx",		禁止2
+		// 		]
+		// 	],
+		// 	"绿线": [
+		// 		[
+		// 			"xx",
+		// 			"xx",
+		// 		],
+		// 		[
+		// 			"xx",
+		// 			"xx",
+		// 		]
+		// 	]
+		// }
+		{
+      id: '欧密茄p5一运连线',
+      type: 'Tether',
+      netRegex: NetRegexes.tether({ id: ['00C8', '00C9'] }),
+			condition: (data)=>data.P5,
+			preRun:(data,matches)=>{
+				if (matches.id == '00C8') {
+					data.P5一运线.蓝线.push([matches.source,matches.target])
+				} else {
+					data.P5一运线.绿线.push([matches.source,matches.target])
+				}
+			},
+			alertText:(data,matches)=>{
+				if (
+					data.P5一运线.绿线[0][0]!=undefined &&
+					data.P5一运线.绿线[0][1]!=undefined &&
+					data.P5一运线.绿线[1][0]!=undefined &&
+					data.P5一运线.绿线[1][1]!=undefined &&
+					data.P5一运线.蓝线[0][0]!=undefined &&
+					data.P5一运线.蓝线[0][1]!=undefined &&
+					data.P5一运线.蓝线[1][0]!=undefined &&
+					data.P5一运线.蓝线[1][1]!=undefined
+				) {
+					//标记
+					PostNamazu('mark', {
+						Name: data.P5一运线.蓝线[0][0],
+						MarkType: data.P5一运标记.外侧1,
+						LocalOnly: onlyMeMarkP5,
+					});
+					PostNamazu('mark', {
+						Name: data.P5一运线.蓝线[0][1],
+						MarkType: data.P5一运标记.外侧2,
+						LocalOnly: onlyMeMarkP5,
+					});
+					PostNamazu('mark', {
+						Name: data.P5一运线.蓝线[1][0],
+						MarkType: data.P5一运标记.内侧1,
+						LocalOnly: onlyMeMarkP5,
+					});
+					PostNamazu('mark', {
+						Name: data.P5一运线.蓝线[1][1],
+						MarkType: data.P5一运标记.内侧2,
+						LocalOnly: onlyMeMarkP5,
+					});
+				}
+			},
+		},
 	],
 });

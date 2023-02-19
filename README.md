@@ -63,6 +63,9 @@ const usePostNamazu = true;
 #### 鲶鱼精小队播报开关
 
 ```js
+const PartyPostNamazu = true; 
+//鲶鱼精聊天框全队播报总开关
+
 const P1PostNamazu = true; 
 //P1接线踩塔是否鲶鱼精聊天框全队播报
 
