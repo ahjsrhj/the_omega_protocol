@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 # The Omega Protocol EZgame
 
 绝欧米茄cacbot自定义js触发器，附带3D绘制
