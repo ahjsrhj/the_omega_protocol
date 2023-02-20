@@ -4,8 +4,8 @@ const usePostNamazu = true; //是否启用鲶鱼精？关闭填false，开启填
 
 //标记
 const useMark = true; //是否启用标记？（需确保鲶鱼精已启用）
-const onlyMeMark = true; //P1接线标记是否仅自己可见？
-const onlyMeMarkP2 = true; //P2一运标记是否仅自己可见？
+const onlyMeMark = false; //P1接线标记是否仅自己可见？
+const onlyMeMarkP2 = false; //P2一运标记是否仅自己可见？
 const onlyMeMarkP2_5 = false; //P2.5标记是否仅自己可见？
 const onlyMeMarkP3 = false; //P3小电视点名标记是否仅自己可见？
 const onlyMeMarkP5 = false; //P5点名标记是否仅自己可见？
@@ -49,10 +49,10 @@ const 优先级 = [
   '战士',
   '骑士',
   '武士',
-  '镰刀',
   '武僧',
   '龙骑',
   '忍者',
+  '镰刀',
   '机工',
   '诗人',
   '舞者',
@@ -184,14 +184,14 @@ function PostNamazu测试(text) {
 }
 //POST
 function Splatoon(namespace, time, data) {
-  fetch(`http://127.0.0.1:${portOfSplatoon}/?namespace=${namespace}&destroyAt=${time}`, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: data
-  });
+  // fetch(`http://127.0.0.1:${portOfSplatoon}/?namespace=${namespace}&destroyAt=${time}`, {
+  //   method: "POST",
+  //   mode: "no-cors",
+  //   headers: {
+  //     "Content-Type": "application/json"
+  //   },
+  //   body: data
+  // });
 }
 //ffd
 const FFD = {
@@ -538,26 +538,26 @@ Options.Triggers.push({
 					PostNamazu('queue', [
 						{
 							c: 'command',
-							p: '/p ============',
+							p: '/e ============',
 						},
 						{
 							c: 'command',
-							p: '/p 1塔3线：' + a[0] + ' ' + a[1],
+							p: '/e 1塔3线：' + a[0] + ' ' + a[1],
 							d: 20,
 						},
 						{
 							c: 'command',
-							p: '/p 1线3塔：' + c[0] + ' ' + c[1],
+							p: '/e 2塔4线：' + b[0] + ' ' + b[1],
 							d: 20,
 						},
 						{
 							c: 'command',
-							p: '/p 2塔4线：' + b[0] + ' ' + b[1],
+							p: '/e 3塔1线：' + c[0] + ' ' + c[1],
 							d: 20,
 						},
 						{
 							c: 'command',
-							p: '/p 2线4塔：' + d[0] + ' ' + d[1],
+							p: '/e 4塔2线：' + d[0] + ' ' + d[1],
 							d: 20,
 						},
 					]);
@@ -962,8 +962,8 @@ Options.Triggers.push({
 					);
 				});
 				let index = 点名一样.indexOf(data.myJob);
-				if (index == 0) return '去上半场 （右）';
-				if (index == 1) return '去下半场 （左）';
+				if (index == 0) return '去上半场 左';
+				if (index == 1) return '去下半场 右';
 			},
 		},
 		{
@@ -1290,10 +1290,10 @@ Options.Triggers.push({
 			alertText: (data) => {
 				let skills = data.P2男女组合技FFD[0];
 				let re = skills[1] + skills[0];
-				if (re == '钢铁十字') return '钢铁十字，远离男女';
-				if (re == '月环辣翅') return '月环辣翅，靠近男的';
-				if (re == '钢铁辣翅') return '钢铁辣翅，靠近女的';
-				if (re == '月环十字') return '月环十字，男人两边';
+				if (re == '钢铁十字') return '远离男女';
+				if (re == '月环辣翅') return '男人脚下';
+				if (re == '钢铁辣翅') return '女人脚下';
+				if (re == '月环十字') return '男人两侧';
 			},
 			run: (data) => {
 				let skills = data.P2男女组合技FFD[0];
@@ -1347,11 +1347,11 @@ Options.Triggers.push({
 					},
 				};
 
-				FFD.Send(json[skills[1]]);
+				// FFD.Send(json[skills[1]]);
 				if (skills[0] == '辣翅') {
-					FFD.send_feetfighter(data.P2男女组合技FFD[1], 50, 8, 40, 20, 5);
+					// FFD.send_feetfighter(data.P2男女组合技FFD[1], 50, 8, 40, 20, 5);
 				} else {
-					FFD.Send(json[skills[0]]);
+					// FFD.Send(json[skills[0]]);
 				}
 			},
 		},
@@ -1409,8 +1409,8 @@ Options.Triggers.push({
 						duration: 10,
 					},
 				};
-				FFD.Send(json);
-				FFD.Send(json2);
+				// FFD.Send(json);
+				// FFD.Send(json2);
 			},
 		},
 		{
@@ -1506,6 +1506,7 @@ Options.Triggers.push({
 					let name1 = data.一运击退换组[0];
 					let name2 = data.一运击退换组[1];
 					if (data.P2一运名字[name1][1] == data.P2一运名字[name2][1]) {
+						// 要换位
 						let a1 = 0;
 						let a2 = 0;
 						if (data.P2一运名字[name1][2] == '第一排') a1 = 1;
@@ -1518,11 +1519,16 @@ Options.Triggers.push({
 						if (data.P2一运名字[name2][2] == '第四排') a2 = 4;
 						//分析要换位的图形
 						let move = '';
+						let changeName1 = '';
 						if (a1 > a2) {
 							move = data.P2一运名字[name1][0];
+							changeName1 = name1;
 						} else {
 							move = data.P2一运名字[name2][0];
+							changeName1 = name2;
 						}
+
+
 						//看自己是哪一组
 						if (data.P2一运名字[data.me][0] == move) {
 							if (data.P2一运名字[data.me][1] == '左') {
@@ -1531,6 +1537,26 @@ Options.Triggers.push({
 								data.P2一运名字[data.me][1] = '左';
 							}
 						}
+
+						// 聊天框提示换位组
+						PostNamazu('command', `/e ${move} 交换 <se.1>`);
+
+						let changeName2 = ''
+
+						// 判断同组另一个是谁
+						Object.keys(data.P2一运名字)
+              .filter((name) => name != changeName1)
+              .forEach((name) => {
+								if (data.P2一运名字[name][0] == move) {
+									// 这个人
+									changeName2 = name;
+								}
+							});
+
+						const job1 = nametocnjob(changeName1, data);
+						const job2 = nametocnjob(changeName2, data);
+						// 聊天框提示换位组
+						PostNamazu('command', `/e ${job1} <=> ${job2}`);
 					}
 				}
 			},
