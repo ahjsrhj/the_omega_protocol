@@ -26,8 +26,9 @@ function PostNamazu(type, text) {
 	}
 }
 
-var time = 0;
-var party_time = {};
+
+var party = [];
+var on = true;
 
 Options.Triggers.push({
 	zoneId: ZoneId.MatchAll,
@@ -37,41 +38,44 @@ Options.Triggers.push({
 			netRegex: /戦闘開始まで/,
 			suppressSeconds: 40,
 			promise: async (data, matches) => {
-				let boss = await callOverlayHandler({
+				let all = await callOverlayHandler({
 					call: 'getCombatants',
 				});
-				time = 0;
-				party_time = {};
-
-				let me = boss.combatants[0];
-				let buff = me.Effects;
-				for (const i in buff) {
-					if (Number(buff[i].BuffID) == 48) {
-						time = Number(buff[i].Timer);
-						break;
-					}
+				if (all.length<8) {
+					on = false;
+					return
 				}
-
-				let party = [];
-				for (let i in boss) {
-					if (boss[i].WorldName != null) {
-						party.push(boss[i]);
-					}
-				}
-				if (party.length == 8) {
-					for (const i in party) {
-						if (party[i].Name == me.Name) continue;
-						let buffs = party[i].Effects;
-						for (const j in buffs) {
-							if (Number(buffs[j].BuffID) == 48) {
-								party_time[party[i].Name] = Number(buffs[j].Timer);
-								break;
-							}
+				
+				party = [
+					all.combatants[0],
+					all.combatants[1],
+					all.combatants[2],
+					all.combatants[3],
+					all.combatants[4],
+					all.combatants[5],
+					all.combatants[6],
+					all.combatants[7],
+				];
+				//格式化party
+				for (const i in party) {
+					if (party[i].WorldName == null) return
+					let buffs = party[i].Effects;
+					let time = 0;
+					for (const j in buffs) {
+						let buff = Number(buffs[j].BuffID);
+						if (buff == 48) {
+							time = Number(buffs[j].Timer);
 						}
 					}
+					party[i] = {
+						name:party[i].Name,
+						time:time
+					};
 				}
 			},
 			alertText: () => {
+				if (!on) return
+				let time = party[0].time;
 				if (time == 0) {
 					return '当前没有食物！';
 				}
@@ -84,31 +88,46 @@ Options.Triggers.push({
 				if (time < 900) {
 					return '食物时间不足15分钟！';
 				}
+				if (time < 1200) {
+					return '食物时间不足20分钟！';
+				}
 			},
 			run: () => {
+				if (!on) return
 				let text = [];
 				let a = 0;
-				for (const i in party_time) {
-					let _time = party_time[i];
-					if (_time == 0) {
-						text[a] = `${i} 当前没有食物！`;
+				for (const i in party) {
+					if (i == 0) continue
+					let name = party[i].name;
+					let time = party[i].time;
+					if (time == 0) {
+						text[a] = `/e ${name} 当前没有食物！`;
+						a++;
 						continue;
 					}
-					if (_time < 300) {
-						text[a] = `${i} 食物时间不足5分钟！`;
+					if (time < 300) {
+						text[a] = `/e ${name} 食物时间不足5分钟！`;
+						a++;
 						continue;
 					}
-					if (_time < 600) {
-						text[a] = `${i} 食物时间不足10分钟！`;
+					if (time < 600) {
+						text[a] = `/e ${name} 食物时间不足10分钟！`;
+						a++;
 						continue;
 					}
-					if (_time < 900) {
-						text[a] = `${i} 食物时间不足15分钟！`;
+					if (time < 900) {
+						text[a] = `/e ${name} 食物时间不足15分钟！`;
+						a++;
 						continue;
 					}
-					a++;
+					if (time < 1200) {
+						text[a] = `/e ${name} 食物时间不足20分钟！`;
+						a++;
+						continue;
+					}
 				}
-				PostNamazu('command', '=====食物提醒<se.1>====');
+				if (a==0) return
+				PostNamazu('command', '/e =====食物提醒<se.1>====');
 				for (const i in text) {
 					PostNamazu('command', text[i]);
 				}

@@ -468,6 +468,7 @@ Options.Triggers.push({
 			P3小电视点名: [],
 			P4点名: [],
 			P4波动炮: 1,
+			P5: false,
 		};
 	},
 	timelineTriggers: [
@@ -1417,6 +1418,7 @@ Options.Triggers.push({
 			id: 'TOP Spotlight',
 			type: 'HeadMarker',
 			netRegex: {},
+			condition: (data) => !data.P5,
 			preRun: (data, matches) => {
 				const id = getHeadmarkerId(data, matches);
 				if (id === headmarkers.stack) {
@@ -1738,11 +1740,9 @@ Options.Triggers.push({
 			run: (data) => {
 				PostNamazuMarkClear();
 				//删除前2P的变量
-				data.全能之主优先级 = undefined;
 				data.solarRayTargets = undefined;
 				data.inLine = undefined;
 				data.synergyMarker = undefined;
-				data.spotlightStacks = undefined;
 				data.cannonFodder = undefined;
 				data.塔次数 = undefined;
 				data.一运击退换组 = undefined;
@@ -2214,6 +2214,7 @@ Options.Triggers.push({
 				capture: true,
 			}),
 			durationSeconds: 5,
+			condition: (data) => !data.P5,
 			preRun: (data, matches) => {
 				data.P3小电视点名.push(matches.target);
 			},
@@ -2540,13 +2541,14 @@ Options.Triggers.push({
 				let p2 = data.P4点名[1];
 				p1 = nametocnjob(p1, data);
 				p2 = nametocnjob(p2, data);
-				console.log(p1,p2);
 				let job = nametocnjob(data.me, data);
 				data.P4点名 = [];
 				let 补充 = data.P4波动炮 == 3 ? '，目标圈外穿地火' : '';
 
-				if ((left.includes(p1) && left.includes(p2))||(right.includes(p1) && right.includes(p2))) {
-					console.log('1');
+				if (
+					(left.includes(p1) && left.includes(p2)) ||
+					(right.includes(p1) && right.includes(p2))
+				) {
 					//点名在同一边
 					//P1 P2排序
 					if (left.includes(p1)) {
@@ -2588,7 +2590,7 @@ Options.Triggers.push({
 			type: 'StartsUsing',
 			netRegex: { id: '7B7B', capture: false },
 			alertText: 'P4狂暴',
-			run :(data)=>{
+			run: (data) => {
 				//删除前4P变量
 				data.smellDefamation = undefined;
 				data.smellRot = undefined;
@@ -2624,41 +2626,36 @@ Options.Triggers.push({
 				data.patchVulnCount = undefined;
 				data.waveCannonStacks = undefined;
 				data.monitorPlayers = undefined;
-			}
+			},
 		},
-		
+
 		//P5
 
 		{
-      id: 'P5开始',
-      type: 'StartsUsing',
-      netRegex: NetRegexes.startsUsing({ id: '7B88', capture: false }),
-      run: (data) => {
-        data.P5 = true;
+			id: 'P5开始',
+			type: 'StartsUsing',
+			netRegex: NetRegexes.startsUsing({ id: '7B88', capture: false }),
+			run: (data) => {
+				data.P5 = true;
 				data.P5一运线 = {
-					蓝线:[],
-					绿线:[]
+					蓝线: [],
+					绿线: [],
 				};
-      },
-			alarmText:'超大AOE'
-    },
-		{
-      id: '欧密茄大拳拳换位判断',
-      type: 'AddedCombatant',
-      netRegex: NetRegexes.addedCombatantFull({ npcBaseId: ['15709', '15710'] }),
-			condition: (data)=>data.P5,
-			infoText:'小拳拳'
+				data.P5一运线count = 0;
+			},
+			alarmText: '超大AOE',
 		},
+
 		//00C9蓝线
 		//00C8绿线
 
 		// "P5一运线": {
-		// 	"蓝线": [  						data.P5一运线.蓝线[0]为场外组，标记攻击12				
+		// 	"蓝线": [  						data.P5一运线.蓝线[0]为场外组，标记攻击12
 		// 		[
 		// 			"xx",		攻击1
 		// 			"xx",		攻击2
 		// 		],
-		// 		[										data.P5一运线.蓝线[1]为场内组，标记禁止12		
+		// 		[										data.P5一运线.蓝线[1]为场内组，标记禁止12
 		// 			"xx",		禁止1
 		// 			"xx",		禁止2
 		// 		]
@@ -2675,51 +2672,66 @@ Options.Triggers.push({
 		// 	]
 		// }
 		{
-      id: '欧密茄p5一运连线',
-      type: 'Tether',
-      netRegex: NetRegexes.tether({ id: ['00C8', '00C9'] }),
-			condition: (data)=>data.P5,
-			preRun:(data,matches)=>{
+			id: '欧密茄p5一运连线出现',
+			type: 'Tether',
+			netRegex: NetRegexes.tether({ id: ['00C8', '00C9'] }),
+			condition: (data) => data.P5,
+			preRun: (data, matches) => {
 				if (matches.id == '00C8') {
-					data.P5一运线.蓝线.push([matches.source,matches.target])
+					data.P5一运线.蓝线.push([matches.source, matches.target]);
 				} else {
-					data.P5一运线.绿线.push([matches.source,matches.target])
+					data.P5一运线.绿线.push([matches.source, matches.target]);
+				}
+				data.P5一运线count++;
+			},
+			alertText: (data) => {
+				if (data.P5一运线count == 4) {
+					if (data.P5一运线.蓝线[0][0] == data.me)
+						return '绿线，去蟑螂右边靠外';
+					if (data.P5一运线.蓝线[0][1] == data.me)
+						return '绿线，去蟑螂左边靠外';
+					if (data.P5一运线.蓝线[1][0] == data.me)
+						return '绿线，去蟑螂右边靠内';
+					if (data.P5一运线.蓝线[1][1] == data.me)
+						return '绿线，去蟑螂左边靠内';
+					return '蓝线，靠近光头拉线';
 				}
 			},
-			alertText:(data,matches)=>{
-				if (
-					data.P5一运线.绿线[0][0]!=undefined &&
-					data.P5一运线.绿线[0][1]!=undefined &&
-					data.P5一运线.绿线[1][0]!=undefined &&
-					data.P5一运线.绿线[1][1]!=undefined &&
-					data.P5一运线.蓝线[0][0]!=undefined &&
-					data.P5一运线.蓝线[0][1]!=undefined &&
-					data.P5一运线.蓝线[1][0]!=undefined &&
-					data.P5一运线.蓝线[1][1]!=undefined
-				) {
+			run: (data) => {
+				if (data.P5一运线count == 4) {
 					//标记
 					PostNamazu('mark', {
 						Name: data.P5一运线.蓝线[0][0],
-						MarkType: data.P5一运标记.外侧1,
+						MarkType: P5一运标记.外侧1,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
 						Name: data.P5一运线.蓝线[0][1],
-						MarkType: data.P5一运标记.外侧2,
+						MarkType: P5一运标记.外侧2,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
 						Name: data.P5一运线.蓝线[1][0],
-						MarkType: data.P5一运标记.内侧1,
+						MarkType: P5一运标记.内侧1,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
 						Name: data.P5一运线.蓝线[1][1],
-						MarkType: data.P5一运标记.内侧2,
+						MarkType: P5一运标记.内侧2,
 						LocalOnly: onlyMeMarkP5,
 					});
 				}
 			},
+		},
+		{
+			id: '欧密茄大拳拳出现',
+			type: 'AddedCombatant',
+			netRegex: NetRegexes.addedCombatantFull({
+				npcBaseId: ['15709', '15710'],
+			}),
+			condition: (data) => data.P5,
+			suppressSeconds: 1,
+			infoText: '同色换异色不换',
 		},
 	],
 });
