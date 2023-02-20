@@ -2,6 +2,15 @@
 const portOfSplatoon = 47774; //底裤系带的位置
 const usePostNamazu = true; //是否启用鲶鱼精？关闭填false，开启填true (关闭后，标记，聊天框播报都用不了)
 
+
+//鲶鱼精聊天框全队播报
+const PartyPostNamazu = true; //鲶鱼精聊天框全队播报总开关
+const P1PostNamazu = true; //P1接线踩塔是否鲶鱼精聊天框全队播报
+const P2PostNamazu = true; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
+const P3PostNamazu1 = true; //P3HW塔颜色播报
+const P3PostNamazu = true; //P3小电视站位是否鲶鱼精聊天框全队播报
+
+
 //标记
 const useMark = true; //是否启用标记？（需确保鲶鱼精已启用）
 const onlyMeMark = true; //P1接线标记是否仅自己可见？
@@ -27,12 +36,6 @@ const P5一运标记={
 	内侧2:'stop2',
 }
 
-//鲶鱼精聊天框全队播报
-const PartyPostNamazu = true; //鲶鱼精聊天框全队播报总开关
-const P1PostNamazu = true; //P1接线踩塔是否鲶鱼精聊天框全队播报
-const P2PostNamazu = true; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
-const P3PostNamazu1 = true; //P3HW塔颜色播报
-const P3PostNamazu = true; //P3小电视站位是否鲶鱼精聊天框全队播报
 
 
    
@@ -469,6 +472,7 @@ Options.Triggers.push({
 			P4点名: [],
 			P4波动炮: 1,
 			P5: false,
+			P5一运: false,
 		};
 	},
 	timelineTriggers: [
@@ -2205,7 +2209,6 @@ Options.Triggers.push({
 				}
 			},
 		},
-
 		{
 			id: 'P3 小电视点名标记',
 			type: 'GainsEffect',
@@ -2637,30 +2640,42 @@ Options.Triggers.push({
 			netRegex: NetRegexes.startsUsing({ id: '7B88', capture: false }),
 			run: (data) => {
 				data.P5 = true;
+				data.P5一运 = true;
 				data.P5一运线 = {
 					蓝线: [],
 					绿线: [],
 				};
 				data.P5一运线count = 0;
+				data.P5一运拳头pos = [];
+				data.P5一运玩家pos = {};
+				data.P5一运走法 = {
+					蓝线远组:null,
+					蓝线近组:null,
+					攻击组:null,
+					禁止组:null,
+					世界远:null,
+					世界近:null,
+					小电视:null,
+				};
 			},
 			alarmText: '超大AOE',
 		},
 
-		//00C9蓝线
-		//00C8绿线
+		//00C9绿线
+		//00C8蓝线
 
 		// "P5一运线": {
-		// 	"蓝线": [  						data.P5一运线.蓝线[0]为场外组，标记攻击12
+		// 	"绿线": [  						data.P5一运线.绿线[0]为场外组，标记攻击12
 		// 		[
 		// 			"xx",		攻击1
 		// 			"xx",		攻击2
 		// 		],
-		// 		[										data.P5一运线.蓝线[1]为场内组，标记禁止12
+		// 		[										data.P5一运线.绿线[1]为场内组，标记禁止12
 		// 			"xx",		禁止1
 		// 			"xx",		禁止2
 		// 		]
 		// 	],
-		// 	"绿线": [
+		// 	"蓝线": [
 		// 		[
 		// 			"xx",
 		// 			"xx",
@@ -2675,24 +2690,24 @@ Options.Triggers.push({
 			id: '欧密茄p5一运连线出现',
 			type: 'Tether',
 			netRegex: NetRegexes.tether({ id: ['00C8', '00C9'] }),
-			condition: (data) => data.P5,
+			condition: (data) => data.P5 && data.P5一运,
 			preRun: (data, matches) => {
 				if (matches.id == '00C8') {
-					data.P5一运线.蓝线.push([matches.source, matches.target]);
-				} else {
 					data.P5一运线.绿线.push([matches.source, matches.target]);
+				} else {
+					data.P5一运线.蓝线.push([matches.source, matches.target]);
 				}
 				data.P5一运线count++;
 			},
 			alertText: (data) => {
 				if (data.P5一运线count == 4) {
-					if (data.P5一运线.蓝线[0][0] == data.me)
+					if (data.P5一运线.绿线[0][0] == data.me)
 						return '绿线，去蟑螂右边靠外';
-					if (data.P5一运线.蓝线[0][1] == data.me)
+					if (data.P5一运线.绿线[0][1] == data.me)
 						return '绿线，去蟑螂左边靠外';
-					if (data.P5一运线.蓝线[1][0] == data.me)
+					if (data.P5一运线.绿线[1][0] == data.me)
 						return '绿线，去蟑螂右边靠内';
-					if (data.P5一运线.蓝线[1][1] == data.me)
+					if (data.P5一运线.绿线[1][1] == data.me)
 						return '绿线，去蟑螂左边靠内';
 					return '蓝线，靠近光头拉线';
 				}
@@ -2701,22 +2716,22 @@ Options.Triggers.push({
 				if (data.P5一运线count == 4) {
 					//标记
 					PostNamazu('mark', {
-						Name: data.P5一运线.蓝线[0][0],
+						Name: data.P5一运线.绿线[0][0],
 						MarkType: P5一运标记.外侧1,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
-						Name: data.P5一运线.蓝线[0][1],
+						Name: data.P5一运线.绿线[0][1],
 						MarkType: P5一运标记.外侧2,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
-						Name: data.P5一运线.蓝线[1][0],
+						Name: data.P5一运线.绿线[1][0],
 						MarkType: P5一运标记.内侧1,
 						LocalOnly: onlyMeMarkP5,
 					});
 					PostNamazu('mark', {
-						Name: data.P5一运线.蓝线[1][1],
+						Name: data.P5一运线.绿线[1][1],
 						MarkType: P5一运标记.内侧2,
 						LocalOnly: onlyMeMarkP5,
 					});
@@ -2724,14 +2739,120 @@ Options.Triggers.push({
 			},
 		},
 		{
-			id: '欧密茄大拳拳出现',
+			id: 'P5 一运大拳拳收集',
 			type: 'AddedCombatant',
 			netRegex: NetRegexes.addedCombatantFull({
 				npcBaseId: ['15709', '15710'],
 			}),
-			condition: (data) => data.P5,
-			suppressSeconds: 1,
-			infoText: '同色换异色不换',
+			condition: (data) => data.P5 && data.P5一运,
+			run: (data, matches) => {
+				data.P5一运拳头pos.push([matches.x, matches.y]);
+			},
+		},
+		{
+			id: 'P5 一运大拳拳出现',
+			type: 'AddedCombatant',
+			netRegex: NetRegexes.addedCombatantFull({
+				npcBaseId: ['15709', '15710'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			suppressSeconds: 10,
+			delaySeconds: 0.5,
+			promise: async (data, matches) => {
+				//收集玩家位置
+				let all = await callOverlayHandler({
+					call: 'getCombatants',
+				});
+				all = all.combatants;
+				for (const i in all) {
+					if (i > 7) break;
+					data.P5一运玩家pos[all[i].Name] = [all[i].PosX, all[i].PosY];
+				}
+			},
+			infoText: '同换异不换',
+		},
+		//D70 绿线伴随的buff
+		//DB0 蓝线伴随的buff
+		//D73 世界远，靠场边
+		//D72 世界近，绿线中点
+		{
+			id: 'P5 一运世界近远收集',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D73', 'D72'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			run:(data,matches)=>{
+				if (matches.effectId == 'D73') {
+					data.P5一运走法.世界远 = matches.target
+				}else{
+					data.P5一运走法.世界近 = matches.target
+				}
+			}
+		},
+		{
+			id: 'P5 一运放黄圈',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D70', 'DB0'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			suppressSeconds: 10,
+			delaySeconds: 18,
+			alertText:(data)=>{
+				//计算拉蓝线最近的组
+				let party = data.P5一运玩家pos;
+				let 蓝线组1 = data.P5一运线.蓝线[0];
+				let 蓝线组2 = data.P5一运线.蓝线[1];
+				let x1 = data.P5一运玩家pos[蓝线组1[0]][0];
+				let y1 = data.P5一运玩家pos[蓝线组1[0]][1];
+				let x2 = data.P5一运玩家pos[蓝线组1[1]][0];
+				let y2 = data.P5一运玩家pos[蓝线组1[1]][1];
+				let dis1 = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+				x1 = data.P5一运玩家pos[蓝线组2[0]][0];
+				y1 = data.P5一运玩家pos[蓝线组2[0]][1];
+				x2 = data.P5一运玩家pos[蓝线组2[1]][0];
+				y2 = data.P5一运玩家pos[蓝线组2[1]][1];
+				let dis2 = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+				let 蓝线近组 = (dis1<dis2)?蓝线组1:蓝线组2;
+				let 蓝线远组 = (dis1>dis2)?蓝线组1:蓝线组2;
+				data.P5一运走法.蓝线近组 = 蓝线近组;
+				data.P5一运走法.蓝线远组 = 蓝线远组;
+				//tts
+				if (蓝线远组.includes(data.me)) 
+					return '靠近放黄圈，然后去场中上下站'
+				return '放黄圈，然后引导转转手'
+			},
+		},
+		{
+			id: 'P5 一运小电视点名',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D7D', 'D7C'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			run: (data,matches)=>{
+				data.P5一运走法.小电视 = matches.target
+			}
+		},
+		{
+			id: 'P5 一运投盾',
+			type: 'Ability',
+			netRegex: { id: '7B27' },
+			condition: (data) => data.P5 && data.P5一运,
+			alertText:(data,matches)=>{
+				let 补充 = '';
+				if (data.P5一运走法.小电视 == data.me) 补充 = ',站最外放小电视'
+				if (matches.target == data.me) {
+					//点你
+					return `靠近光头${补充}`
+				}else{
+					//不点你
+					if (data.P5一运走法.蓝线近组.includes(data.me)||data.P5一运走法.蓝线远组.includes(data.me)) {
+						return `靠近BOSS吃分摊${补充}`
+					}
+				}
+			}
 		},
 	],
 });
