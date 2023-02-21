@@ -6,7 +6,7 @@ const usePostNamazu = true; //是否启用鲶鱼精？关闭填false，开启填
 //鲶鱼精聊天框全队播报
 const PartyPostNamazu = true; //鲶鱼精聊天框全队播报总开关
 const P1PostNamazu = true; //P1接线踩塔是否鲶鱼精聊天框全队播报
-const P2PostNamazu = true; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
+const P2PostNamazu = false; //P2狂暴倒计时是否鲶鱼精聊天框全队播报
 const P3PostNamazu1 = true; //P3HW塔颜色播报
 const P3PostNamazu = true; //P3小电视站位是否鲶鱼精聊天框全队播报
 
@@ -36,6 +36,12 @@ const P5一运标记={
 	内侧2:'stop2',
 }
 
+const P2SonyMark = {
+	'圆圈': '',
+	'三角': '',
+	'方': '',
+	'叉': '',
+}
 
 
    
@@ -1544,9 +1550,6 @@ Options.Triggers.push({
 							}
 						}
 
-						// 聊天框提示换位组
-						PostNamazu('command', `/e ${move} 交换 <se.1>`);
-
 						let changeName2 = ''
 
 						// 判断同组另一个是谁
@@ -1562,7 +1565,7 @@ Options.Triggers.push({
 						const job1 = nametocnjob(changeName1, data);
 						const job2 = nametocnjob(changeName2, data);
 						// 聊天框提示换位组
-						PostNamazu('command', `/e ${job1} <=> ${job2}`);
+						PostNamazu('command', `/p ${P2SonyMark[move]}交换 ${job1} <=> ${job2} <se.1>`);
 					}
 				}
 			},
