@@ -1,7 +1,3 @@
-[TOC]
-
-
-
 # The Omega Protocol EZgame
 
 绝欧米茄cacbot自定义js触发器，附带3D绘制
@@ -15,6 +11,8 @@
 ## 更新
 
 **最新进度：前4P完整写完，后续会用ffd代替spl**
+
+2023.2.21.00:22：更新到P5一运自动标记，修复P4换组bug
 
 2023.2.17.23:51：修复小电视全部横排点名时会出现的bug
 
@@ -103,6 +101,9 @@ const onlyMeMarkP2_5 = false;
 const onlyMeMarkP3 = false; 
 //P3小电视点名标记是否仅自己可见？
 
+const onlyMeMarkP5 = false; 
+//P5点名标记是否仅自己可见？
+
 const P2一运标记 = { 
   左1: 'attack1',
   左2: 'attack2',
@@ -114,6 +115,13 @@ const P2一运标记 = {
   右4: 'square',
 }
 //标记左边用攻击标记，右边锁链，从上到下1234 (因为没有锁链4，所以右4用方块代替)
+
+const P5一运标记={
+	外侧1:'attack1',
+	外侧2:'attack2',
+	内侧1:'stop1',
+	内侧2:'stop2',
+}
 ```
 
 #### 打法设置
