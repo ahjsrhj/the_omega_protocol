@@ -197,99 +197,99 @@ function Splatoon(namespace, time, data) {
   });
 }
 //ffd
-const FFD = {
-  颜色 : 'nomal2',
-  Send: (json) => {
-    fetch(`http://127.0.0.1:8001/rpc`, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(json)
-    });
-  },
-  PosTranslation: (x, y, z, angle, distance) => {
-    // 点平移函数
-    // x,y为原始pos
-    // angle为平移弧度（南为0，北为3.14，顺时针为负，逆时针为正）
-    // distance为平移距离
-    // 返回最终点的[x,z,y]
-    if (typeof (x) != Number) x = Number(x)
-    if (typeof (y) != Number) y = Number(y)
-    if (typeof (z) != Number) z = Number(z)
-    if (typeof (angle) != Number) angle = Number(angle)
-    if (typeof (distance) != Number) distance = Number(distance)
-    let a = distance * Math.sin(angle);
-    let b = distance * Math.cos(angle);
-    return [x + a, z, y + b]
-  },
-  GetAng: (heading, where) => {
-    //用于获取以单位面向为标准的方向弧度（南为0，北为3.14，顺时针为负，逆时针为正）
-    //heading为当前面向弧度
-    //where为方位，填“下”“左”“右”
-    if (typeof (heading) != Number) heading = Number(heading)
-    let a = (heading >= 0) ? -Math.PI / 2 : Math.PI / 2;
-    let b = (heading >= 0) ? -Math.PI : Math.PI;
-    if (where == "下") return heading + b
-    if (where == "左") return heading + a
-    if (where == "右") return heading - a
-  },
-  Rad_Ang: (x, how) => {
-    //角度弧度转换函数
-    //how不填默认弧度转角度，填1角度转弧度
-    if (typeof (x) != Number) x = Number(x)
-    if (how == undefined) {
-      x = x * 180.0 / Math.PI
-    } else {
-      x = x * Math.PI / 180.0;
-    }
-    return x
-  },
-  send_feetfighter: (data, width, _width, length1, length2, duration) => {
-    //发送辣翅画图
-    //总宽度，中间留空宽度，向前长度，向后长度
-    let len = (width + _width) / 4;
+// const FFD = {
+//   颜色 : 'nomal2',
+//   Send: (json) => {
+//     fetch(`http://127.0.0.1:8001/rpc`, {
+//       method: "POST",
+//       mode: "no-cors",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify(json)
+//     });
+//   },
+//   PosTranslation: (x, y, z, angle, distance) => {
+//     // 点平移函数
+//     // x,y为原始pos
+//     // angle为平移弧度（南为0，北为3.14，顺时针为负，逆时针为正）
+//     // distance为平移距离
+//     // 返回最终点的[x,z,y]
+//     if (typeof (x) != Number) x = Number(x)
+//     if (typeof (y) != Number) y = Number(y)
+//     if (typeof (z) != Number) z = Number(z)
+//     if (typeof (angle) != Number) angle = Number(angle)
+//     if (typeof (distance) != Number) distance = Number(distance)
+//     let a = distance * Math.sin(angle);
+//     let b = distance * Math.cos(angle);
+//     return [x + a, z, y + b]
+//   },
+//   GetAng: (heading, where) => {
+//     //用于获取以单位面向为标准的方向弧度（南为0，北为3.14，顺时针为负，逆时针为正）
+//     //heading为当前面向弧度
+//     //where为方位，填“下”“左”“右”
+//     if (typeof (heading) != Number) heading = Number(heading)
+//     let a = (heading >= 0) ? -Math.PI / 2 : Math.PI / 2;
+//     let b = (heading >= 0) ? -Math.PI : Math.PI;
+//     if (where == "下") return heading + b
+//     if (where == "左") return heading + a
+//     if (where == "右") return heading - a
+//   },
+//   Rad_Ang: (x, how) => {
+//     //角度弧度转换函数
+//     //how不填默认弧度转角度，填1角度转弧度
+//     if (typeof (x) != Number) x = Number(x)
+//     if (how == undefined) {
+//       x = x * 180.0 / Math.PI
+//     } else {
+//       x = x * Math.PI / 180.0;
+//     }
+//     return x
+//   },
+//   send_feetfighter: (data, width, _width, length1, length2, duration) => {
+//     //发送辣翅画图
+//     //总宽度，中间留空宽度，向前长度，向后长度
+//     let len = (width + _width) / 4;
 
-    let angle = FFD.GetAng(data.Heading, '左');
-    let temp = FFD.PosTranslation(data.PosX, data.PosY, data.PosZ, angle, len);
-    angle = FFD.GetAng(data.Heading, '下');
-    temp = FFD.PosTranslation(temp[0], temp[2], data.PosZ, angle, length2);
+//     let angle = FFD.GetAng(data.Heading, '左');
+//     let temp = FFD.PosTranslation(data.PosX, data.PosY, data.PosZ, angle, len);
+//     angle = FFD.GetAng(data.Heading, '下');
+//     temp = FFD.PosTranslation(temp[0], temp[2], data.PosZ, angle, length2);
 
-    let angle2 = FFD.GetAng(data.Heading, '右');
-    let temp2 = FFD.PosTranslation(data.PosX, data.PosY, data.PosZ, angle2, len);
-    angle2 = FFD.GetAng(data.Heading, '下');
-    temp2 = FFD.PosTranslation(temp2[0], temp2[2], data.PosZ, angle2, length2);
+//     let angle2 = FFD.GetAng(data.Heading, '右');
+//     let temp2 = FFD.PosTranslation(data.PosX, data.PosY, data.PosZ, angle2, len);
+//     angle2 = FFD.GetAng(data.Heading, '下');
+//     temp2 = FFD.PosTranslation(temp2[0], temp2[2], data.PosZ, angle2, length2);
 
-    let 辣翅1 = {
-      cmd: 'add_omen',
-      color: FFD.颜色,
-      shape_scale: {
-        key: "rect",
-        range: length1 + length2,
-        width: (width - _width) / 2,
-      },
-      pos: temp,
-      facing: data.Heading,
-      'duration': duration,
-    };
-    let 辣翅2 = {
-      cmd: 'add_omen',
-      color: FFD.颜色,
-      shape_scale: {
-        key: "rect",
-        range: length1 + length2,
-        width: (width - _width) / 2,
-      },
-      pos: temp2,
-      facing: data.Heading,
-      'duration': duration,
-    };
+//     let 辣翅1 = {
+//       cmd: 'add_omen',
+//       color: FFD.颜色,
+//       shape_scale: {
+//         key: "rect",
+//         range: length1 + length2,
+//         width: (width - _width) / 2,
+//       },
+//       pos: temp,
+//       facing: data.Heading,
+//       'duration': duration,
+//     };
+//     let 辣翅2 = {
+//       cmd: 'add_omen',
+//       color: FFD.颜色,
+//       shape_scale: {
+//         key: "rect",
+//         range: length1 + length2,
+//         width: (width - _width) / 2,
+//       },
+//       pos: temp2,
+//       facing: data.Heading,
+//       'duration': duration,
+//     };
 
-    FFD.Send(辣翅1);
-    FFD.Send(辣翅2);
-  }
-};
+//     FFD.Send(辣翅1);
+//     FFD.Send(辣翅2);
+//   }
+// };
 //优先级初始化
 let shunxu = [];
 for (let i = 0; i < 优先级.length; i++) {
@@ -1261,163 +1261,163 @@ Options.Triggers.push({
 				}
 			},
 		},
-		{
-			id: 'P2 一运画图男女组合技',
-			type: 'ability',
-			netRegex: NetRegexes.ability({
-				id: '7B3E',
-			}),
-			delaySeconds: 5.5,
-			promise: async (data, matches) => {
-				const boss = await callOverlayHandler({
-					call: 'getCombatants',
-					names: 欧米茄F.concat(欧米茄M),
-				});
-				let F, M;
-				for (let i in boss.combatants) {
-					if (欧米茄F.includes(boss.combatants[i].Name)) {
-						F = boss.combatants[i];
-					}
-				}
-				for (let i in boss.combatants) {
-					if (
-						欧米茄M.includes(boss.combatants[i].Name) &&
-						boss.combatants[i].ID == F.ID + 1
-					) {
-						M = boss.combatants[i];
-					}
-				}
-				let skills = [];
-				skills[0] = F.WeaponId == 0 ? '十字' : '辣翅';
-				skills[1] = M.WeaponId == 0 ? '钢铁' : '月环';
-				data.P2男女组合技FFD = [skills, F, M];
-			},
-			alertText: (data) => {
-				let skills = data.P2男女组合技FFD[0];
-				let re = skills[1] + skills[0];
-				if (re == '钢铁十字') return '钢铁十字，远离男女';
-				if (re == '月环辣翅') return '月环辣翅，靠近男的';
-				if (re == '钢铁辣翅') return '钢铁辣翅，靠近女的';
-				if (re == '月环十字') return '月环十字，男人两边';
-			},
-			run: (data) => {
-				let skills = data.P2男女组合技FFD[0];
-				const 男人 = data.P2男女组合技FFD[2].ID;
-				const 女人 = data.P2男女组合技FFD[1].ID;
-				let json = {
-					钢铁: {
-						cmd: 'add_omen',
-						color: FFD.颜色,
-						shape_scale: {
-							key: 'circle',
-							range: 10.02,
-						},
-						pos: {
-							key: 'actor_pos',
-							id: 男人,
-						},
-						duration: 5,
-					},
-					月环: {
-						cmd: 'add_omen',
-						color: FFD.颜色,
-						shape_scale: {
-							key: 'donut',
-							range: 30,
-							inner: 10,
-						},
-						pos: {
-							key: 'actor_pos',
-							id: 男人,
-						},
-						duration: 5,
-					},
-					十字: {
-						cmd: 'add_omen',
-						color: FFD.颜色,
-						shape_scale: {
-							key: 'action_shape',
-							id: parseInt('7B2D', 16),
-						},
-						pos: {
-							key: 'actor_pos',
-							id: 女人,
-						},
-						facing: {
-							key: 'actor_relative_facing',
-							src: 女人,
-							dst: 男人,
-						},
-						duration: 5,
-					},
-				};
+		// {
+		// 	id: 'P2 一运画图男女组合技',
+		// 	type: 'ability',
+		// 	netRegex: NetRegexes.ability({
+		// 		id: '7B3E',
+		// 	}),
+		// 	delaySeconds: 5.5,
+		// 	promise: async (data, matches) => {
+		// 		const boss = await callOverlayHandler({
+		// 			call: 'getCombatants',
+		// 			names: 欧米茄F.concat(欧米茄M),
+		// 		});
+		// 		let F, M;
+		// 		for (let i in boss.combatants) {
+		// 			if (欧米茄F.includes(boss.combatants[i].Name)) {
+		// 				F = boss.combatants[i];
+		// 			}
+		// 		}
+		// 		for (let i in boss.combatants) {
+		// 			if (
+		// 				欧米茄M.includes(boss.combatants[i].Name) &&
+		// 				boss.combatants[i].ID == F.ID + 1
+		// 			) {
+		// 				M = boss.combatants[i];
+		// 			}
+		// 		}
+		// 		let skills = [];
+		// 		skills[0] = F.WeaponId == 0 ? '十字' : '辣翅';
+		// 		skills[1] = M.WeaponId == 0 ? '钢铁' : '月环';
+		// 		data.P2男女组合技FFD = [skills, F, M];
+		// 	},
+		// 	alertText: (data) => {
+		// 		let skills = data.P2男女组合技FFD[0];
+		// 		let re = skills[1] + skills[0];
+		// 		if (re == '钢铁十字') return '钢铁十字，远离男女';
+		// 		if (re == '月环辣翅') return '月环辣翅，靠近男的';
+		// 		if (re == '钢铁辣翅') return '钢铁辣翅，靠近女的';
+		// 		if (re == '月环十字') return '月环十字，男人两边';
+		// 	},
+		// 	run: (data) => {
+		// 		let skills = data.P2男女组合技FFD[0];
+		// 		const 男人 = data.P2男女组合技FFD[2].ID;
+		// 		const 女人 = data.P2男女组合技FFD[1].ID;
+		// 		let json = {
+		// 			钢铁: {
+		// 				cmd: 'add_omen',
+		// 				color: FFD.颜色,
+		// 				shape_scale: {
+		// 					key: 'circle',
+		// 					range: 10.02,
+		// 				},
+		// 				pos: {
+		// 					key: 'actor_pos',
+		// 					id: 男人,
+		// 				},
+		// 				duration: 5,
+		// 			},
+		// 			月环: {
+		// 				cmd: 'add_omen',
+		// 				color: FFD.颜色,
+		// 				shape_scale: {
+		// 					key: 'donut',
+		// 					range: 30,
+		// 					inner: 10,
+		// 				},
+		// 				pos: {
+		// 					key: 'actor_pos',
+		// 					id: 男人,
+		// 				},
+		// 				duration: 5,
+		// 			},
+		// 			十字: {
+		// 				cmd: 'add_omen',
+		// 				color: FFD.颜色,
+		// 				shape_scale: {
+		// 					key: 'action_shape',
+		// 					id: parseInt('7B2D', 16),
+		// 				},
+		// 				pos: {
+		// 					key: 'actor_pos',
+		// 					id: 女人,
+		// 				},
+		// 				facing: {
+		// 					key: 'actor_relative_facing',
+		// 					src: 女人,
+		// 					dst: 男人,
+		// 				},
+		// 				duration: 5,
+		// 			},
+		// 		};
 
-				FFD.Send(json[skills[1]]);
-				if (skills[0] == '辣翅') {
-					FFD.send_feetfighter(data.P2男女组合技FFD[1], 50, 8, 40, 20, 5);
-				} else {
-					FFD.Send(json[skills[0]]);
-				}
-			},
-		},
-		{
-			id: 'P2 一运画图眼睛激光',
-			type: 'ability',
-			netRegex: NetRegexes.ability({
-				id: '7B3E',
-			}),
-			delaySeconds: 10,
-			run: () => {
-				let json = {
-					cmd: 'foreach',
-					name: 'target_id',
-					values: { key: 'actors_by_base_id', id: 15716 },
-					func: {
-						cmd: 'add_omen',
-						color: 'nomal',
-						shape_scale: {
-							key: 'rect',
-							range: 65,
-							width: 16,
-						},
-						pos: {
-							key: 'actor_pos',
-							id: { key: 'arg', name: 'target_id' },
-						},
-						facing: {
-							key: 'actor_facing',
-							id: { key: 'arg', name: 'target_id' },
-						},
-						duration: 10,
-					},
-				};
-				let json2 = {
-					cmd: 'foreach',
-					name: 'target_id',
-					values: { key: 'actors_by_base_id', id: 15716 },
-					func: {
-						cmd: 'add_omen',
-						color: 'hard',
-						shape_scale: {
-							key: 'rect',
-							range: 35,
-							width: 16,
-						},
-						pos: {
-							key: 'actor_pos',
-							id: { key: 'arg', name: 'target_id' },
-						},
-						facing: {
-							key: 'actor_facing',
-							id: { key: 'arg', name: 'target_id' },
-						},
-						duration: 10,
-					},
-				};
-				FFD.Send(json);
-				FFD.Send(json2);
-			},
-		},
+		// 		FFD.Send(json[skills[1]]);
+		// 		if (skills[0] == '辣翅') {
+		// 			FFD.send_feetfighter(data.P2男女组合技FFD[1], 50, 8, 40, 20, 5);
+		// 		} else {
+		// 			FFD.Send(json[skills[0]]);
+		// 		}
+		// 	},
+		// },
+		// {
+		// 	id: 'P2 一运画图眼睛激光',
+		// 	type: 'ability',
+		// 	netRegex: NetRegexes.ability({
+		// 		id: '7B3E',
+		// 	}),
+		// 	delaySeconds: 10,
+		// 	run: () => {
+		// 		let json = {
+		// 			cmd: 'foreach',
+		// 			name: 'target_id',
+		// 			values: { key: 'actors_by_base_id', id: 15716 },
+		// 			func: {
+		// 				cmd: 'add_omen',
+		// 				color: 'nomal',
+		// 				shape_scale: {
+		// 					key: 'rect',
+		// 					range: 65,
+		// 					width: 16,
+		// 				},
+		// 				pos: {
+		// 					key: 'actor_pos',
+		// 					id: { key: 'arg', name: 'target_id' },
+		// 				},
+		// 				facing: {
+		// 					key: 'actor_facing',
+		// 					id: { key: 'arg', name: 'target_id' },
+		// 				},
+		// 				duration: 10,
+		// 			},
+		// 		};
+		// 		let json2 = {
+		// 			cmd: 'foreach',
+		// 			name: 'target_id',
+		// 			values: { key: 'actors_by_base_id', id: 15716 },
+		// 			func: {
+		// 				cmd: 'add_omen',
+		// 				color: 'hard',
+		// 				shape_scale: {
+		// 					key: 'rect',
+		// 					range: 35,
+		// 					width: 16,
+		// 				},
+		// 				pos: {
+		// 					key: 'actor_pos',
+		// 					id: { key: 'arg', name: 'target_id' },
+		// 				},
+		// 				facing: {
+		// 					key: 'actor_facing',
+		// 					id: { key: 'arg', name: 'target_id' },
+		// 				},
+		// 				duration: 10,
+		// 			},
+		// 		};
+		// 		FFD.Send(json);
+		// 		FFD.Send(json2);
+		// 	},
+		// },
 		{
 			id: 'TOP Spotlight',
 			type: 'HeadMarker',
@@ -2649,16 +2649,16 @@ Options.Triggers.push({
 				data.P5一运拳头pos = [];
 				data.P5一运玩家pos = {};
 				data.P5一运走法 = {
-					蓝线远组:null,
-					蓝线近组:null,
-					攻击组:null,
-					禁止组:null,
-					世界远:null,
-					世界近:null,
-					小电视:null,
+					蓝线远组: null,
+					蓝线近组: null,
+					攻击组: null,
+					禁止组: null,
+					世界远: null,
+					世界近: null,
+					小电视: null,
 				};
 			},
-			alarmText: '超大AOE',
+			alarmText: '超大AOE，一运开始',
 		},
 
 		//00C9绿线
@@ -2715,6 +2715,8 @@ Options.Triggers.push({
 			run: (data) => {
 				if (data.P5一运线count == 4) {
 					//标记
+					data.P5一运走法.攻击组 = data.P5一运线.绿线[0];
+					data.P5一运走法.禁止组 = data.P5一运线.绿线[1];
 					PostNamazu('mark', {
 						Name: data.P5一运线.绿线[0][0],
 						MarkType: P5一运标记.外侧1,
@@ -2762,10 +2764,10 @@ Options.Triggers.push({
 				//收集玩家位置
 				let all = await callOverlayHandler({
 					call: 'getCombatants',
+					names: data.party.partyNames_,
 				});
 				all = all.combatants;
 				for (const i in all) {
-					if (i > 7) break;
 					data.P5一运玩家pos[all[i].Name] = [all[i].PosX, all[i].PosY];
 				}
 			},
@@ -2782,13 +2784,13 @@ Options.Triggers.push({
 				effectId: ['D73', 'D72'],
 			}),
 			condition: (data) => data.P5 && data.P5一运,
-			run:(data,matches)=>{
+			run: (data, matches) => {
 				if (matches.effectId == 'D73') {
-					data.P5一运走法.世界远 = matches.target
-				}else{
-					data.P5一运走法.世界近 = matches.target
+					data.P5一运走法.世界远 = matches.target;
+				} else {
+					data.P5一运走法.世界近 = matches.target;
 				}
-			}
+			},
 		},
 		{
 			id: 'P5 一运放黄圈',
@@ -2799,29 +2801,29 @@ Options.Triggers.push({
 			condition: (data) => data.P5 && data.P5一运,
 			suppressSeconds: 10,
 			delaySeconds: 18,
-			alertText:(data)=>{
+			alertText: (data) => {
 				//计算拉蓝线最近的组
-				let party = data.P5一运玩家pos;
+				console.log(data.P5一运线.蓝线);
 				let 蓝线组1 = data.P5一运线.蓝线[0];
 				let 蓝线组2 = data.P5一运线.蓝线[1];
 				let x1 = data.P5一运玩家pos[蓝线组1[0]][0];
 				let y1 = data.P5一运玩家pos[蓝线组1[0]][1];
 				let x2 = data.P5一运玩家pos[蓝线组1[1]][0];
 				let y2 = data.P5一运玩家pos[蓝线组1[1]][1];
-				let dis1 = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+				let dis1 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 				x1 = data.P5一运玩家pos[蓝线组2[0]][0];
 				y1 = data.P5一运玩家pos[蓝线组2[0]][1];
 				x2 = data.P5一运玩家pos[蓝线组2[1]][0];
 				y2 = data.P5一运玩家pos[蓝线组2[1]][1];
-				let dis2 = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-				let 蓝线近组 = (dis1<dis2)?蓝线组1:蓝线组2;
-				let 蓝线远组 = (dis1>dis2)?蓝线组1:蓝线组2;
+				let dis2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+				let 蓝线近组 = dis1 < dis2 ? 蓝线组1 : 蓝线组2;
+				let 蓝线远组 = dis1 > dis2 ? 蓝线组1 : 蓝线组2;
+				console.log(蓝线组1,dis1,蓝线组2,dis2);
 				data.P5一运走法.蓝线近组 = 蓝线近组;
 				data.P5一运走法.蓝线远组 = 蓝线远组;
 				//tts
-				if (蓝线远组.includes(data.me)) 
-					return '靠近放黄圈，然后去场中上下站'
-				return '放黄圈，然后引导转转手'
+				if (蓝线远组.includes(data.me)) return '靠近放黄圈，然后去场中前后站';
+				return '放黄圈，然后引导转转手';
 			},
 		},
 		{
@@ -2831,28 +2833,96 @@ Options.Triggers.push({
 				effectId: ['D7D', 'D7C'],
 			}),
 			condition: (data) => data.P5 && data.P5一运,
-			run: (data,matches)=>{
-				data.P5一运走法.小电视 = matches.target
-			}
+			run: (data, matches) => {
+				data.P5一运走法.小电视 = matches.target;
+			},
 		},
 		{
 			id: 'P5 一运投盾',
 			type: 'Ability',
-			netRegex: { id: '7B27' },
+			netRegex: { id: '7B28' },
 			condition: (data) => data.P5 && data.P5一运,
-			alertText:(data,matches)=>{
+			alertText: (data, matches) => {
 				let 补充 = '';
-				if (data.P5一运走法.小电视 == data.me) 补充 = ',站最外放小电视'
+				if (data.P5一运走法.小电视 == data.me) 补充 = ',站最外放小电视';
 				if (matches.target == data.me) {
 					//点你
-					return `靠近光头${补充}`
-				}else{
+					return `靠近光头躲避分摊${补充}`;
+				} else {
 					//不点你
-					if (data.P5一运走法.蓝线近组.includes(data.me)||data.P5一运走法.蓝线远组.includes(data.me)) {
-						return `靠近BOSS吃分摊${补充}`
+					if (
+						data.P5一运走法.蓝线近组.includes(data.me) ||
+						data.P5一运走法.蓝线远组.includes(data.me)
+					) {
+						return `靠近BOSS吃分摊${补充}`;
 					}
 				}
+			},
+		},
+		{
+			id: 'P5 一运后半阶段',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D73', 'D72'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			suppressSeconds: 5,
+			delaySeconds: 31,
+			alertText: (data) => {
+				if (data.me == data.P5一运走法.世界近)
+					return '近点名，去绿线中点靠场内';
+				if (data.me == data.P5一运走法.世界远) 
+					return '远点名，去正点靠场边';
+				if (
+					data.P5一运走法.蓝线近组.includes(data.me) ||
+					data.P5一运走法.蓝线远组.includes(data.me)
+				)
+					return '无点名，远离蟑螂靠场边躲避其他人';
+				if(data.P5一运走法.禁止组.includes(data.me))
+					return '拉线组，让绿线与AOE边界平行'
+			},
+		},
+		{
+			id: 'P5 一运后半阶段第一次拉绿线',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D73', 'D72'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			suppressSeconds: 5,
+			delaySeconds: 38,
+			alertText:(data) => {
+				if(data.P5一运走法.攻击组.includes(data.me))
+					return '靠近拉断线，然后在蟑螂一侧引导近点名'
 			}
+		},
+		{
+			id: 'P5 一运后半阶段第二次拉绿线',
+			type: 'GainsEffect',
+			netRegex: NetRegexes.gainsEffect({
+				effectId: ['D73', 'D72'],
+			}),
+			condition: (data) => data.P5 && data.P5一运,
+			suppressSeconds: 5,
+			delaySeconds: 51,
+			alertText:(data) => {
+				if(data.P5一运走法.禁止组.includes(data.me))
+					return '靠近拉断线'
+			}
+		},
+		{
+			id: 'P5 二运开始',
+			type: 'StartsUsing',
+			netRegex: NetRegexes.startsUsing({ id: '8014', capture: false }),
+			run: (data) => {
+				data.P5一运 = false;
+				data.P5一运线 = undefined;
+				data.P5一运线count = undefined;
+				data.P5一运拳头pos = undefined;
+				data.P5一运玩家pos = undefined;
+				data.P5一运走法 = undefined;
+			},
+			alarmText: '超大AOE,二运开始',
 		},
 	],
 });
